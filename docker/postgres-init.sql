@@ -1,0 +1,6 @@
+CREATE DATABASE userdb;
+CREATE DATABASE paymentdb;
+CREATE DATABASE notificationdb;
+CREATE DATABASE aidb;
+\c aidb;
+CREATE EXTENSION IF NOT EXISTS vector;

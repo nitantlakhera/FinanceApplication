@@ -1,0 +1,17 @@
+spring:
+  ai:
+    openai:
+      enabled: true
+      api-key: ${KIMI_API_KEY:}
+      base-url: https://api.moonshot.cn
+      chat:
+        options:
+          model: kimi-k2
+          temperature: 0.2
+      embedding:
+        options:
+          model: text-embedding-3-small
+
+ai:
+  model:
+    provider: kimi

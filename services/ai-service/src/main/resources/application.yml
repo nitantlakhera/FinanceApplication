@@ -1,0 +1,87 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: ai-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aidb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  ai:
+    pgvector:
+      initialize-schema: true
+      dimensions: 1536
+      distance-type: cosine_distance
+      index-type: hnsw
+      remove-existing-vector-store-data: false
+  kafka:
+    bootstrap-servers: localhost:9092
+
+ai:
+  model:
+    provider: ${AI_MODEL_PROVIDER:fallback}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms
+    instances:
+      ai:
+        base-config: default
+  circuitbreaker:
+    configs:
+      default:
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 80
+        slow-call-duration-threshold: 5s
+        sliding-window-size: 10
+        wait-duration-in-open-state: 20s
+    instances:
+      ai:
+        base-config: default
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 10s
+    instances:
+      ai:
+        base-config: default
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

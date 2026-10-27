@@ -1,0 +1,107 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: finance-gateway
+  namespace: finance
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: finance-routes
+  namespace: finance
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - finance-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /users
+      timeout: 10s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: user-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /orders
+      timeout: 10s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: order-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /payments
+      timeout: 10s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: payment-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /inventory
+      timeout: 10s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: inventory-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /notifications
+      timeout: 10s
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: notification-service
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /ai
+        - uri:
+            prefix: /mcp
+      timeout: 30s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: gateway-error,connect-failure,refused-stream
+      route:
+        - destination:
+            host: ai-service
+            port:
+              number: 80

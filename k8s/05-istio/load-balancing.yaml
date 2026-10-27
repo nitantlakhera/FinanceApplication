@@ -1,0 +1,147 @@
+# Istio L7 load-balancing, connection pooling, and outlier detection for the finance services.
+# Kubernetes Services provide the base service discovery (DNS + Endpoints); Istio's control
+# plane translates those endpoints into Envoy xDS/EDS configuration so sidecars can
+# load-balance intelligently at the application layer.
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: user-service-lb
+  namespace: finance
+spec:
+  host: user-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: order-service-lb
+  namespace: finance
+spec:
+  host: order-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: payment-service-lb
+  namespace: finance
+spec:
+  host: payment-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: inventory-service-lb
+  namespace: finance
+spec:
+  host: inventory-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: notification-service-lb
+  namespace: finance
+spec:
+  host: notification-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: ai-service-lb
+  namespace: finance
+spec:
+  host: ai-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        h1MaxPendingRequests: 100
+        maxRequestsPerConnection: 100
+    loadBalancer:
+      simple: LEAST_CONN
+    localityLbSetting:
+      enabled: true
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50

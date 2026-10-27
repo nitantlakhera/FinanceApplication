@@ -1,0 +1,17 @@
+spring:
+  ai:
+    ollama:
+      enabled: true
+      base-url: http://localhost:11434
+      chat:
+        model: llama3.2
+        options:
+          temperature: 0.2
+      embedding:
+        model: nomic-embed-text
+    pgvector:
+      dimensions: 768
+
+ai:
+  model:
+    provider: ollama
